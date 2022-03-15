@@ -1,7 +1,4 @@
-import {
-  HeartIcon,
-  VolumeUpIcon as VolumeDownIcon,
-} from '@heroicons/react/outline';
+import { VolumeUpIcon as VolumeDownIcon } from '@heroicons/react/outline';
 import {
   FastForwardIcon,
   PauseIcon,
@@ -14,9 +11,9 @@ import {
 import { debounce } from 'lodash';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useState } from 'react';
-import useSongInfo from '../hooks/useSongInfo';
-import useSpotify from '../hooks/useSpotify';
-import useStore from '../store/useStore';
+import useSongInfo from '../../hooks/useSongInfo';
+import useSpotify from '../../hooks/useSpotify';
+import useStore from '../../store/useStore';
 
 // TODO implement missing buttons
 
@@ -73,11 +70,13 @@ function Player() {
     <div className="grid h-24 grid-cols-3 bg-gradient-to-b from-black to-gray-900 px-2 text-xs text-white md:px-8 md:text-base">
       {/* left */}
       <div className="flex items-center space-x-4">
-        <img
-          className="hidden h-10 w-10 md:inline"
-          src={songInfo?.album.images?.[0]?.url}
-          alt=""
-        />
+        {songInfo?.album.images?.[0] && (
+          <img
+            className="hidden h-10 w-10 md:inline"
+            src={songInfo?.album.images?.[0]?.url}
+            alt=""
+          />
+        )}
         <div>
           <h3>{songInfo?.name}</h3>
           <p>{songInfo?.artists?.[0]?.name}</p>

@@ -1,9 +1,9 @@
 import type { GetServerSideProps, NextPage } from 'next';
 import { getSession } from 'next-auth/react';
 import Head from 'next/head';
-import Center from '../components/Center';
-import Player from '../components/Player';
-import Sidebar from '../components/Sidebar';
+import Center from '../components/templates/Center';
+import Player from '../components/organisms/Player';
+import Sidebar from '../components/organisms/Sidebar';
 
 const Home: NextPage = () => {
   return (

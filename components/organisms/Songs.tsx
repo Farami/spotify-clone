@@ -1,5 +1,5 @@
-import useStore from '../store/useStore';
-import Song from './Song';
+import useStore from '../../store/useStore';
+import Song from '../molecules/Song';
 
 function Songs() {
   const playlist = useStore((store) => store.playlist);
