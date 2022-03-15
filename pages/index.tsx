@@ -4,22 +4,34 @@ import Head from 'next/head';
 import Center from '../components/templates/Center';
 import Player from '../components/organisms/Player';
 import Sidebar from '../components/organisms/Sidebar';
+import { useErrorState, WebPlaybackSDK } from 'react-spotify-web-playback-sdk';
+import useSpotify from '../hooks/useSpotify';
+import { useEffect } from 'react';
 
 const Home: NextPage = () => {
+  const spotifyApi = useSpotify();
+
   return (
     <>
       <Head>
         <title>Spotify Clone</title>
       </Head>
       <div className="h-screen overflow-hidden bg-black">
-        <main className="flex">
-          <Sidebar />
-          <Center />
-        </main>
+        <WebPlaybackSDK
+          initialDeviceName="Spotify Clone"
+          getOAuthToken={spotifyApi.getAccessToken}
+          initialVolume={0.5}
+          connectOnInitialized={true}
+        >
+          <main className="flex">
+            <Sidebar />
+            <Center />
+          </main>
 
-        <div className="sticky bottom-0">
-          <Player />
-        </div>
+          <div className="sticky bottom-0">
+            <Player />
+          </div>
+        </WebPlaybackSDK>
       </div>
     </>
   );

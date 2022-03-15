@@ -11,6 +11,12 @@ import {
 import { debounce } from 'lodash';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useState } from 'react';
+import {
+  useErrorState,
+  usePlayerDevice,
+  useSpotifyPlayer,
+  useWebPlaybackSDKReady,
+} from 'react-spotify-web-playback-sdk';
 import useSongInfo from '../../hooks/useSongInfo';
 import useSpotify from '../../hooks/useSpotify';
 import useStore from '../../store/useStore';
@@ -19,7 +25,8 @@ import useStore from '../../store/useStore';
 
 function Player() {
   const spotifyApi = useSpotify();
-  const { data: session, status } = useSession();
+  const player = useSpotifyPlayer();
+  const { data: session } = useSession();
   const currentTrackId = useStore((state) => state.currentTrackId);
   const setCurrentTrackId = useStore((state) => state.setCurrentTrackId);
   const isPlaying = useStore((state) => state.isPlaying);
@@ -27,6 +34,17 @@ function Player() {
   const [volume, setVolume] = useState(50);
 
   const songInfo = useSongInfo();
+
+  const errorState = useErrorState();
+  useEffect(() => console.log(errorState), [errorState]);
+
+  const device = usePlayerDevice();
+  useEffect(() => console.log(device), [device]);
+
+  useEffect(() => {
+    console.log(player);
+    player?.connect();
+  }, [player, spotifyApi.getAccessToken()]);
 
   const fetchCurrentSong = async () => {
     if (!songInfo) {
@@ -38,9 +56,9 @@ function Player() {
   const handlePlayPause = async () => {
     const apiPlaying = await spotifyApi.getMyCurrentPlaybackState();
     if (apiPlaying) {
-      await spotifyApi.pause();
+      await player?.pause();
     } else {
-      await spotifyApi.play();
+      await player?.resume();
     }
 
     setIsPlaying(!apiPlaying);
@@ -54,7 +72,7 @@ function Player() {
 
   const debouncedAdjustVolume = useCallback(
     debounce((volume) => {
-      spotifyApi.setVolume(volume).catch((err) => {});
+      player?.setVolume(volume / 100).catch((err) => {});
     }, 500),
     []
   );
@@ -88,7 +106,7 @@ function Player() {
         <SwitchHorizontalIcon className="button" />
         <RewindIcon
           className="button"
-          onClick={() => spotifyApi.skipToPrevious()}
+          onClick={() => player?.previousTrack()}
         />
         {isPlaying ? (
           <PauseIcon className="button h-10 w-10" onClick={handlePlayPause} />
@@ -97,7 +115,7 @@ function Player() {
         )}
         <FastForwardIcon
           className="button"
-          onClick={() => spotifyApi.skipToNext()}
+          onClick={() => player?.nextTrack()}
         />
         <ReplyIcon className="button" />
       </div>

@@ -1,3 +1,7 @@
+import {
+  usePlayerDevice,
+  useSpotifyPlayer,
+} from 'react-spotify-web-playback-sdk';
 import useSpotify from '../../hooks/useSpotify';
 import { convertMillisecondsToMinutesAndSeconds } from '../../lib/time';
 import useStore from '../../store/useStore';
@@ -9,6 +13,8 @@ type Props = {
 
 function Song({ order, track }: Props) {
   const spotifyApi = useSpotify();
+  const device = usePlayerDevice();
+
   const isPlaying = useStore((store) => store.isPlaying);
   const currentTrackId = useStore((store) => store.currentTrackId);
   const setIsPlaying = useStore((store) => store.setIsPlaying);
@@ -18,7 +24,16 @@ function Song({ order, track }: Props) {
     setCurrentTrackId(track.track.id);
     setIsPlaying(true);
 
-    return spotifyApi.play(track.track.uri);
+    fetch(
+      `https://api.spotify.com/v1/me/player/play?device_id=${device?.device_id}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({ uris: [track.track.uri] }),
+        headers: { Authorization: `Bearer ${spotifyApi.getAccessToken()}` },
+      }
+    )
+      .then((res) => res.json())
+      .then((x) => console.log(x));
   };
 
   const nameColor =
