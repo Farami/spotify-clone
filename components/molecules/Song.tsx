@@ -9,16 +9,22 @@ type Props = {
 
 function Song({ order, track }: Props) {
   const spotifyApi = useSpotify();
-  const isPlaying = useStore((store) => store.isPlaying);
-  const currentTrackId = useStore((store) => store.currentTrackId);
-  const setIsPlaying = useStore((store) => store.setIsPlaying);
-  const setCurrentTrackId = useStore((store) => store.setCurrentTrackId);
 
-  const playSong = () => {
+  const [currentTrackId, setCurrentTrackId] = useStore((store) => [
+    store.currentTrackId,
+    store.setCurrentTrackId,
+  ]);
+  const [isPlaying, setIsPlaying] = useStore((store) => [
+    store.isPlaying,
+    store.setIsPlaying,
+  ]);
+
+  const playSong = async () => {
+    // will be overriden by a listener later but this makes the interface more snappy
     setCurrentTrackId(track.track.id);
     setIsPlaying(true);
 
-    return spotifyApi.play(track.track.uri);
+    await spotifyApi.play(track.track.uri);
   };
 
   const nameColor =
@@ -26,7 +32,6 @@ function Song({ order, track }: Props) {
       ? 'text-green-500'
       : 'text-white';
 
-  // TODO highlight currently playing
   return (
     <div
       className={`grid grid-cols-2 rounded-lg py-4 px-5 text-gray-500 hover:bg-gray-900`}

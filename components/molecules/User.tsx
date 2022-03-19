@@ -5,6 +5,10 @@ import React from 'react';
 function User() {
   const { data: session } = useSession();
 
+  if (!session) {
+    return null;
+  }
+
   return (
     <header className="absolute top-5 right-8">
       <div
@@ -13,10 +17,10 @@ function User() {
       >
         <img
           className="h-10 w-10 rounded-full"
-          src={session?.user.image}
+          src={session.user.image}
           alt=""
         />
-        <h2>{session?.user.name}</h2>
+        <h2>{session.user.name}</h2>
         <ChevronDownIcon className="h5 w-5" />
       </div>
     </header>

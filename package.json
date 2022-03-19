@@ -7,11 +7,13 @@
   },
   "dependencies": {
     "@heroicons/react": "^1.0.6",
+    "classnames": "^2.3.1",
     "lodash": "^4.17.21",
     "next": "latest",
     "next-auth": "^4.2.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-spotify-web-playback-sdk": "^3.0.1",
     "spotify-web-api-node": "^5.0.2",
     "zustand": "^3.7.1"
   },
