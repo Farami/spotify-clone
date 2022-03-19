@@ -6,18 +6,20 @@ import {
   RssIcon,
   HeartIcon,
 } from '@heroicons/react/outline';
+import classnames from 'classnames';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import useSpotify from '../../hooks/useSpotify';
 import useStore from '../../store/useStore';
 import IconButton from '../atoms/IconButton';
 import Placeholder from '../atoms/Placeholder';
+import Playlists from '../molecules/Playlists';
 
 // TODO highlight currently selected
 
 function Sidebar() {
   const spotifyApi = useSpotify();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [playlists, setPlaylists] = useState<
     SpotifyApi.PlaylistObjectSimplified[] | null
   >(null);
@@ -42,26 +44,16 @@ function Sidebar() {
         <IconButton icon={HomeIcon} text="Home" />
         <IconButton icon={SearchIcon} text="Search" />
         <IconButton icon={LibraryIcon} text="Your Library" />
+
         <hr className="border-t-[0.1px] border-gray-900" />
 
         <IconButton icon={PlusCircleIcon} text="Create Playlist" />
         <IconButton icon={HeartIcon} text="Liked Songs" />
         <IconButton icon={RssIcon} text="Your Episodes" />
+
         <hr className="border-t-[0.1px] border-gray-900" />
 
-        {!playlists ? (
-          <Placeholder count={20} />
-        ) : (
-          playlists.map((playlist) => (
-            <p
-              key={playlist.id}
-              className="cursor-pointer hover:text-white"
-              onClick={() => setPlaylistId(playlist.id)}
-            >
-              {playlist.name}
-            </p>
-          ))
-        )}
+        <Playlists />
       </div>
     </div>
   );
