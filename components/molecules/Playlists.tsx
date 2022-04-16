@@ -1,39 +1,25 @@
 import classnames from 'classnames';
-import { useSession } from 'next-auth/react';
-import React, { useEffect, useState } from 'react';
-import useSpotify from '../../hooks/useSpotify';
+import React from 'react';
+import usePlaylists from '../../hooks/usePlaylists';
 import useStore from '../../store/useStore';
 import Placeholder from '../atoms/Placeholder';
 
 function Playlists() {
-  const spotifyApi = useSpotify();
-  const { data: session } = useSession();
-  const [playlists, setPlaylists] = useState<
-    SpotifyApi.PlaylistObjectSimplified[] | null
-  >(null);
+  const { playlists, isLoading } = usePlaylists();
   const [playlistId, setPlaylistId] = useStore((state) => [
     state.playlistId,
     state.setPlaylistId,
   ]);
 
-  useEffect(() => {
-    const fetchPlaylists = async () => {
-      if (spotifyApi.getAccessToken()) {
-        setPlaylists(await spotifyApi.getUserPlaylists());
-      }
-    };
-
-    fetchPlaylists();
-  }, [session, spotifyApi]);
-
-  return !playlists ? (
+  return isLoading ? (
     <Placeholder count={20} />
   ) : (
     <>
       {playlists.map((playlist) => (
         <p
+          title={playlist.name}
           key={playlist.id}
-          className={classnames('cursor-pointer hover:text-white', {
+          className={classnames('cursor-pointer truncate hover:text-white', {
             'text-white': playlist.id === playlistId,
           })}
           onClick={() => setPlaylistId(playlist.id)}

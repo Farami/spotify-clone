@@ -10,15 +10,14 @@ const spotifyApi = new SpotifyWebApi({
 const slimApi = {
   getPlaylist: async (playlistId: string) =>
     spotifyApi.getPlaylist(playlistId).then(({ body }) => body),
-  getUserPlaylists: async () =>
-    spotifyApi.getUserPlaylists().then(({ body }) => body.items),
+  getUserPlaylists: spotifyApi.getUserPlaylists,
   play: (trackId?: string | string[]) =>
     spotifyApi.play(
       trackId
         ? { uris: Array.isArray(trackId) ? trackId : [trackId] }
         : undefined
     ),
-  pause: () => spotifyApi.pause(),
+  pause: spotifyApi.pause,
   getMyCurrentPlayingTrackId: () =>
     spotifyApi
       .getMyCurrentPlayingTrack()
@@ -29,8 +28,8 @@ const slimApi = {
       .then(({ body }) => body?.is_playing ?? false),
   getAccessToken: () => spotifyApi.getAccessToken(),
   skipToPrevious: () => spotifyApi.skipToPrevious(),
-  skipToNext: () => spotifyApi.skipToNext(),
-  setVolume: (volume: number) => spotifyApi.setVolume(volume),
+  skipToNext: spotifyApi.skipToNext,
+  setVolume: spotifyApi.setVolume,
 };
 
 export default function useSpotify() {
