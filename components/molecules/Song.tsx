@@ -45,14 +45,11 @@ function Song({ order, track }: Props) {
           alt=""
         />
 
-        <div>
-          <p
-            className={`w-36 truncate ${nameColor} lg:w-64`}
-            title={track.track.name}
-          >
+        <div className="truncate">
+          <p className={`truncate ${nameColor}`} title={track.track.name}>
             {track.track.name}
           </p>
-          <p className="w-40">{track.track.artists[0].name}</p>
+          <p className="truncate">{track.track.artists[0].name}</p>
         </div>
       </div>
 
