@@ -1,8 +1,11 @@
+import FastAverageColor from 'fast-average-color';
 import { shuffle } from 'lodash';
 import { useState, useEffect } from 'react';
 import useSpotify from '../../hooks/useSpotify';
+import blobToBase64 from '../../lib/blob';
 import useStore from '../../store/useStore';
-//
+import Placeholder from '../atoms/Placeholder';
+
 // TODO extract from current playlist image
 const colors = [
   'from-indigo-500',
@@ -13,6 +16,8 @@ const colors = [
   'from-pink-500',
   'from-purple-500',
 ];
+
+const fac = new FastAverageColor();
 
 function PlaylistHeader() {
   const spotifyApi = useSpotify();
@@ -25,15 +30,35 @@ function PlaylistHeader() {
   ]);
 
   useEffect(() => {
-    spotifyApi
-      .getPlaylist(playlistId)
-      .then(setPlaylist)
-      .catch((err) => console.log(err));
+    if (!spotifyApi.getAccessToken()) {
+      return;
+    }
+
+    spotifyApi.getPlaylist(playlistId).then(setPlaylist);
   }, [spotifyApi, spotifyApi.getAccessToken(), playlistId]);
 
   useEffect(() => {
-    setColor(shuffle(colors)[0]);
-  }, [playlistId]);
+    if (!playlist) {
+      setColor(shuffle(colors)[0]);
+      return;
+    }
+
+    const image = playlist.images?.[0];
+    if (!image) {
+      setColor(shuffle(colors)[0]);
+      return;
+    }
+
+    fetch(image.url)
+      .then((x) => x.blob())
+      .then(blobToBase64)
+      .then(fac.getColorAsync)
+      .then((x) => setColor(x.rgb));
+  }, [playlist]);
+
+  if (!playlist) {
+    return <Placeholder />;
+  }
 
   return (
     <section
@@ -41,13 +66,13 @@ function PlaylistHeader() {
     >
       <img
         className="h-44 w-44 shadow-2xl"
-        src={playlist?.images?.[0]?.url}
+        src={playlist.images?.[0]?.url}
         alt=""
       />
       <div>
         <p>PLAYLIST</p>
         <h1 className="text-2xl font-bold md:text-3xl xl:text-5xl">
-          {playlist?.name}
+          {playlist.name}
         </h1>
       </div>
     </section>
