@@ -15,6 +15,7 @@ import {
   usePlayerDevice,
   useSpotifyPlayer,
 } from 'react-spotify-web-playback-sdk';
+import useCurrentTrack from '../../hooks/useCurrentTrack';
 import useSongInfo from '../../hooks/useSongInfo';
 import useSpotify from '../../hooks/useSpotify';
 import useStore from '../../store/useStore';
@@ -26,37 +27,18 @@ function Player() {
   const player = useSpotifyPlayer();
   const device = usePlayerDevice();
   const songInfo = useSongInfo();
+  const { currentTrackId, isPlaying } = useCurrentTrack();
 
   const { data: session } = useSession();
 
-  const currentTrackId = useStore((state) => state.currentTrackId);
-  const setCurrentTrackId = useStore((state) => state.setCurrentTrackId);
-  const isPlaying = useStore((state) => state.isPlaying);
-  const setIsPlaying = useStore((state) => state.setIsPlaying);
-
   const [volume, setVolume] = useState(50);
 
-  useEffect(() => {
-    if (!player) {
-      return;
-    }
-
-    const callback = (state: Spotify.PlaybackState) => {
-      setCurrentTrackId(state?.track_window?.current_track?.id || null);
-      setIsPlaying(!state?.paused ?? false);
-    };
-
-    player.addListener('player_state_changed', callback);
-
-    return () => player.removeListener('player_state_changed', callback);
-  }, [player]);
-
-  const fetchCurrentSong = async () => {
-    if (!songInfo) {
-      setCurrentTrackId(await spotifyApi.getMyCurrentPlayingTrackId());
-      setIsPlaying(await spotifyApi.getMyCurrentPlaybackState());
-    }
-  };
+  // const fetchCurrentSong = async () => {
+  //   if (!songInfo) {
+  //     setCurrentTrackId(await spotifyApi.getMyCurrentPlayingTrackId());
+  //     setIsPlaying(await spotifyApi.getMyCurrentPlaybackState());
+  //   }
+  // };
 
   const handlePlayPause = async () => {
     const apiPlaying = await spotifyApi.getMyCurrentPlaybackState();
@@ -100,7 +82,7 @@ function Player() {
 
   useEffect(() => {
     if (spotifyApi.getAccessToken() && !currentTrackId) {
-      fetchCurrentSong();
+      // fetchCurrentSong();
       setVolume(50);
     }
   }, [currentTrackId, spotifyApi, session]);
