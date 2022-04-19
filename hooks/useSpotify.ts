@@ -32,7 +32,7 @@ const slimApi = {
   setVolume: spotifyApi.setVolume,
 };
 
-export default function useSpotify() {
+function useSpotify() {
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -49,3 +49,5 @@ export default function useSpotify() {
 
   return slimApi;
 }
+
+export default useSpotify;

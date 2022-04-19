@@ -9,8 +9,6 @@ import {
 import IconButton from '../atoms/IconButton';
 import Playlists from '../molecules/Playlists';
 
-// TODO highlight currently selected
-
 function Sidebar() {
   return (
     <div className="text-md h-screen w-64 flex-col space-y-4 border-r border-gray-900 pl-4 pt-4 pb-24 text-gray-500 md:flex">

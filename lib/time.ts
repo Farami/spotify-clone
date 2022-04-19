@@ -1,4 +1,4 @@
-export function convertMillisecondsToMinutesAndSeconds(milliseconds: number) {
+function convertMillisecondsToMinutesAndSeconds(milliseconds: number) {
   const d = new Date(1000 * Math.round(milliseconds / 1000)); // round to nearest second
 
   function pad(i: number) {
@@ -14,3 +14,5 @@ export function convertMillisecondsToMinutesAndSeconds(milliseconds: number) {
   }
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
+
+export { convertMillisecondsToMinutesAndSeconds };
